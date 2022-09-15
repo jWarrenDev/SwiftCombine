@@ -29,33 +29,14 @@ class APIService: ObservableObject {
         publisherRequest?.cancel()
     }
     
-    // Load the star wars planets form the swapi
+    // Load the itunes music
     func loadFeed() -> AnyPublisher<[Music], Error> {
         let url = URL(string: "https://itunes.apple.com/search?term=taylor+swift&entity=song")
         
         let publisher = URLSession.shared.dataTaskPublisher(for: url!)
-            .retry(2) // If request fail for any circumstance, Retry 3 times
-            .mapError { error -> Error in
-                // Handle Network errors
-                switch error {
-                case URLError.cannotFindHost:
-                    return APIError.networkError(description: error.localizedDescription)
-                default:
-                    return APIError.unknownError(description: error.localizedDescription)
-                }
-            }
             .map{ $0.data }
             .decode(type: Response.self, decoder: JSONDecoder())
             .map{ $0.results } // Map PlanetResponse results
-            .mapError { error -> Error in
-                // Handle JSONDecode errors
-                switch error {
-                case DecodingError.keyNotFound, DecodingError.typeMismatch:
-                    return APIError.responseError(description: error.localizedDescription)
-                default:
-                    return APIError.unknownError(description: error.localizedDescription)
-                }
-            }
             .eraseToAnyPublisher()
         
         self.publisherRequest = publisher.receive(on: DispatchQueue.main)
@@ -68,7 +49,7 @@ class APIService: ObservableObject {
                         self.errorMessage = error.localizedDescription;
                     }
             }, receiveValue: {data in
-                self.response = data; // Set the array of planets to the response
+                self.response = data; // Set the array of music to the response
             })
         
         return publisher;
