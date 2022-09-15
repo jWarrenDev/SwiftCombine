@@ -9,13 +9,6 @@
 import Foundation
 import Combine
 
-// Error enum
-enum APIError: Error {
-    case networkError(description: String)
-    case responseError(description: String)
-    case unknownError(description: String)
-}
-
 class APIService: ObservableObject {
     @Published var response = [Music]()
     @Published var errorMessage: String?
@@ -36,7 +29,7 @@ class APIService: ObservableObject {
         let publisher = URLSession.shared.dataTaskPublisher(for: url!)
             .map{ $0.data }
             .decode(type: Response.self, decoder: JSONDecoder())
-            .map{ $0.results } // Map PlanetResponse results
+            .map{ $0.results } // Map Music results
             .eraseToAnyPublisher()
         
         self.publisherRequest = publisher.receive(on: DispatchQueue.main)
