@@ -9,9 +9,11 @@
 import Foundation
 import Combine
 
-class APIService: ObservableObject {
+class ViewModel: ObservableObject {
     @Published var response = [Music]()
     @Published var errorMessage: String?
+    
+    let url = URL(string: "https://itunes.apple.com/search?term=taylor+swift&entity=song")
     
     private var publisherRequest: Cancellable? {
         didSet {oldValue?.cancel() }
@@ -22,9 +24,8 @@ class APIService: ObservableObject {
         publisherRequest?.cancel()
     }
     
-    // Load the itunes music
+    // Load the itunes music from Service
     func loadFeed() -> AnyPublisher<[Music], Error> {
-        let url = URL(string: "https://itunes.apple.com/search?term=taylor+swift&entity=song")
         
         let publisher = URLSession.shared.dataTaskPublisher(for: url!)
             .map{ $0.data }

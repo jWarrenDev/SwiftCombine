@@ -9,19 +9,37 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @ObservedObject var apiService = APIService()
-    
-    init() {
-        let _ = self.apiService.loadFeed();
-    }
-
+    @ObservedObject var viewModel = ViewModel()
+  
     var body: some View {
-        List(apiService.response) { album in
+        List(viewModel.response) { album in
             HStack {
                 Text(album.trackName)
                 Spacer()
-                ImageView(url: album.artworkUrl100)
+            
+                AsyncImage(url: URL(string: album.artworkUrl100)) { phase in
+                    switch phase {
+                    case .empty:
+                        // Show placeholder view
+                        ProgressView()
+                    case .success(let image):
+                            image.resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
+                    case .failure(let error):
+                        
+                       let _ = print("\(error.localizedDescription)")
+                        // Show error view
+                        Image(systemName: "photo")
+                      
+                    @unknown default:
+                        fatalError()
+                    }
+                }
+                
             }
+        }.onAppear {
+            viewModel.loadFeed()
         }
     }
 }
