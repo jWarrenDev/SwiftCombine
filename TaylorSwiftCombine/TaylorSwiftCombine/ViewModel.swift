@@ -10,7 +10,7 @@ import Foundation
 import Combine
 
 class ViewModel: ObservableObject {
-    @Published var response = [Music]()
+    @Published var results = [Music]()
     @Published var errorMessage: String?
     
     let url = URL(string: "https://itunes.apple.com/search?term=taylor+swift&entity=song")
@@ -43,7 +43,7 @@ class ViewModel: ObservableObject {
                         self.errorMessage = error.localizedDescription;
                     }
             }, receiveValue: {data in
-                self.response = data; // Set the array of music to the response
+                self.results = data; // Set the array of music to the response
             })
         
         return publisher;

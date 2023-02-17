@@ -12,7 +12,7 @@ struct ContentView: View {
     @ObservedObject var viewModel = ViewModel()
   
     var body: some View {
-        List(viewModel.response) { album in
+        List(viewModel.results) { album in
             HStack {
                 Text(album.trackName)
                 Spacer()
